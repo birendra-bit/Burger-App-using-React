@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import Aux from '../../hoc/auxllary'
 import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
+import Modal from '../../components/UI/Modal/Modal'
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 
 const INGREDIENT_PRICE = {
     salad : 5,
@@ -13,13 +15,32 @@ const INGREDIENT_PRICE = {
 class BurgerBuilder extends Component{
     state = {
         ingredients :{
-            salad : 1,
-            bacon : 2,
-            cheese : 1,
-            meat : 1
+            salad : 0,
+            bacon : 0,
+            cheese : 0,
+            meat : 0
         },
-        totalPrice : 20
+        totalPrice : 20,
+        purchasable : false,
+        purchasing : false
     }
+purchaseCancelHandler = ()=>{
+    this.setState({
+        purchasing : false
+    })
+}
+
+purchaseHandler =() =>{
+    this.setState({ purchasing : true })
+}
+updatePurchaseSate(ingredients){
+    const sum = Object.keys(ingredients).map(igkey => {
+        return ingredients[igkey]
+    }).reduce((sum,el)=>{
+        return sum + el 
+    } ,0)
+    this.setState({purchasable : sum > 0 })
+}
 addIngredientHandler = (type)=>{
     const oldCount = this.state.ingredients[type]
     const updatedCount = oldCount + 1 
@@ -31,6 +52,7 @@ addIngredientHandler = (type)=>{
     const oldPrice = this.state.totalPrice
     const newPrice = oldPrice + priceAddition
     this.setState({totalPrice:newPrice, ingredients : updatedIngredients})
+    this.updatePurchaseSate(updatedIngredients)
 }
 removeIngredientsHandler = ( type )=>{
     const oldCount = this.state.ingredients[type]
@@ -45,6 +67,7 @@ removeIngredientsHandler = ( type )=>{
     const oldPrice = this.state.totalPrice
     const newPrice = oldPrice - priceDeduction
     this.setState({totalPrice:newPrice, ingredients : updatedIngredients})
+    this.updatePurchaseSate(updatedIngredients)
 }
     render(){
         const disabledInfo = {
@@ -56,12 +79,17 @@ removeIngredientsHandler = ( type )=>{
         return(
             <Aux>
                 {/* Burger components */}
+                <Modal show = {this.state.purchasing} modalClosed = {this.purchaseCancelHandler}>
+                    <OrderSummary ingredients = {this.state.ingredients} totalPrice = {this.state.totalPrice} />
+                </Modal>
                 <Burger ingredients = {this.state.ingredients} />
                 <BuildControls
                     addIngredient = {this.addIngredientHandler}
                     removeIngredient = { this.removeIngredientsHandler}
                     disabled = {disabledInfo}
+                    purchasable = {this.state.purchasable}
                     totalPrice = {this.state.totalPrice}
+                    ordered = {this.purchaseHandler}
                 />
             </Aux>
         )
