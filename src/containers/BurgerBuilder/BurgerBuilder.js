@@ -29,7 +29,9 @@ purchaseCancelHandler = ()=>{
         purchasing : false
     })
 }
-
+purchaseContinueHandler = () =>{
+    alert('your order is placed')
+}
 purchaseHandler =() =>{
     this.setState({ purchasing : true })
 }
@@ -80,7 +82,9 @@ removeIngredientsHandler = ( type )=>{
             <Aux>
                 {/* Burger components */}
                 <Modal show = {this.state.purchasing} modalClosed = {this.purchaseCancelHandler}>
-                    <OrderSummary ingredients = {this.state.ingredients} totalPrice = {this.state.totalPrice} />
+                    <OrderSummary ingredients = {this.state.ingredients} totalPrice = {this.state.totalPrice} 
+                        purchasedCancel = {this.purchaseCancelHandler} purchaseContinue = {this.purchaseContinueHandler}
+                    />
                 </Modal>
                 <Burger ingredients = {this.state.ingredients} />
                 <BuildControls
