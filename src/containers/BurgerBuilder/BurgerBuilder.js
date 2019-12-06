@@ -31,6 +31,18 @@ purchaseCancelHandler = ()=>{
 }
 purchaseContinueHandler = () =>{
     alert('your order is placed')
+    const updatedIngredients = {
+        ...this.state.ingredients
+    }
+    for ( let key in updatedIngredients){
+        updatedIngredients[key] = 0
+    }
+    
+    this.setState({ ingredients : updatedIngredients,
+        totalPrice : 20,
+        purchasable : false,
+        purchasing : false})
+    this.purchaseCancelHandler()
 }
 purchaseHandler =() =>{
     this.setState({ purchasing : true })
